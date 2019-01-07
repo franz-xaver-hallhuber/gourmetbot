@@ -1,3 +1,8 @@
+import os, inspect, sys
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,currentdir)
+
 from telegram.ext import Updater, CallbackQueryHandler, CommandHandler, Filters, MessageHandler, ConversationHandler
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
 
@@ -5,7 +10,6 @@ from threading import Thread
 import logging
 import Adafruit_DHT
 import time
-import os
 import json
 import socket
 
@@ -17,9 +21,9 @@ simon = Flatmate('Simon', ["android-e5cf63a05ae4ea6c", "android-18ef3254c89a664e
 # peter = Flatmate('Peter', ["android-9fcf94d7fe7938eb","Peters-MBP-2","192.168.178.60"], 52115553, 12)
 stella = Flatmate('Stella', ["android-741115d63e5b6dcc", "STELLA-LAPTOP", "Galaxy-J7", "LAPTOP-SJSQ8ATP"], 200929247,
                   13)
-# andra = Flatmate('Andra', ["Andras-Air",])
+# andra = Flatmate('Andra', ["Andras-Air","iPhone"])
 
-wg = Flat([carl, simon, stella])
+wg = Flat([carl])
 
 # command list for main menu
 commands = ["Check Temperature", "Check Humidity", "Check who's home", "Set Daytime Mode", "Set Silent Mode",
