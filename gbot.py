@@ -315,8 +315,7 @@ def updateVars():
                     mate.vent.setVent(0)
                 elif not manual:
                     mate.vent.setVent(amount)
-
-                l2c(mate.name + b"'s fan is set to " + str(amount) + "%")
+                l2c(mate.name + "'s fan is set to " + str(amount) + "%")
         #except:
         #    startServices()
 
