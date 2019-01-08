@@ -60,7 +60,7 @@ def readGroceryList():
 
 
 def sendRebootMessage(msg):
-    for mate in wg.getAll():
+    for mate in wg.get_all():
         if mate.tID != 0 and msg != "":
             dispatcher.bot.sendMessage(mate.tID, msg)
             l2c("Sent reboot message to " + mate.name)
@@ -86,7 +86,7 @@ def daytime(bot, update):
 def whoshomestring():
     out = "At the moment, "
     res = []
-    for mate in wg.getAll():
+    for mate in wg.get_all():
         if mate.home:
             res.append(mate.name)
     if len(res) == 0:
@@ -107,7 +107,7 @@ def whoshomestring():
 def whoshome(bot, update):
     out = "At the moment, "
     res = []
-    for mate in wg.getAll():
+    for mate in wg.get_all():
         if mate.home:
             res.append(mate.name)
     if len(res) == 0:
@@ -132,25 +132,25 @@ def button(bot, update):
     # bot.edit_message_text(text="Selected option: {}".format(query.data), chat_id=query.message.chat_id, message_id=query.message.message_id)
     if update.message.text in commands:
         command_id = commands.index(update.message.text)
-        name = wg.getNameFromTID(update.message.from_user.id)
+        name = wg.get_name_from_telegram_id(update.message.from_user.id)
         try:
             if command_id == 0:
                 bot.send_message(chat_id=update.message.from_user.id, text="Temperature: "
                                                                            + str(
-                    round(wg.getTemp(name), 1)) + "\xc2\xb0.")
+                    round(wg.get_temp(name), 1)) + "\xc2\xb0.")
             if command_id == 1:
                 bot.send_message(chat_id=update.message.from_user.id, text="Humidity: "
-                                                                           + str(round(wg.getHum(name), 0)) + "%")
+                                                                           + str(round(wg.humidity(name), 0)) + "%")
 
             if command_id == 2:
                 bot.send_message(chat_id=update.message.from_user.id, text=whoshomestring())
 
             if command_id == 4:
-                wg.setNight(name, True)
+                wg.set_night(name, True)
                 bot.send_message(chat_id=update.message.from_user.id, text="Silent mode on")
 
             if command_id == 3:
-                wg.setNight(name, False)
+                wg.set_night(name, False)
                 bot.send_message(chat_id=update.message.from_user.id, text="Silent mode off")
 
         except UserNotRegisteredException as e:
@@ -173,7 +173,7 @@ def getHumidity(bot, update, args):
     else:
         try:
             bot.send_message(chat_id=update.message.chat_id, text="Humidity: "
-                                                                  + str(round(wg.getHum(args[0]), 0)) + "%")
+                                                                  + str(round(wg.humidity(args[0]), 0)) + "%")
         except:
             bot.send_message(chat_id=update.message.chat_id, text="No user "
                                                                   "named " + args[0])
@@ -197,7 +197,7 @@ def getHome(bot, update, args):
     else:
         try:
             bot.send_message(chat_id=update.message.chat_id,
-                             text=args[0].capitalize() + " is " + ("" if wg.isHome(args[0]) else "not ") + "home.")
+                             text=args[0].capitalize() + " is " + ("" if wg.home(args[0]) else "not ") + "home.")
         except:
             bot.send_message(chat_id=update.message.chat_id, text="No user "
                                                                   "named " + args[0])
@@ -215,7 +215,7 @@ def getTemperature(bot, update, args):
     else:
         try:
             bot.send_message(chat_id=update.message.chat_id, text="Temperature: "
-                                                                  + str(round(wg.getTemp(args[0]), 1)) + "\xc2\xb0.")
+                                                                  + str(round(wg.get_temp(args[0]), 1)) + "\xc2\xb0.")
         except:
             bot.send_message(chat_id=update.message.chat_id, text="No user "
                                                                   "named " + args[0])
@@ -233,7 +233,7 @@ def setFanMan(bot, update, args):
     else:
         l2c("set fan to " + args[0])
         try:
-            m = wg.getMateFromTID(update.message.chat_id)
+            m = wg.get_mate_from_telegram_id(update.message.chat_id)
             l2c(m.name + " set the fan to " + args[0])
             global manual
             manual = True
@@ -248,87 +248,87 @@ def setFanMan(bot, update, args):
 def updateVars():
     while 1:
         time.sleep(10)
-        #try:
-        for mate in wg.getAll():
-            humidity = 0
-            temperature = 0
+        try:
+            for mate in wg.get_all():
+                humidity = 0
+                temperature = 0
 
-            # fetch data
-            # from sensor (if hard wired)
-            if mate.sensorPin != 0:
-                print("wired")
-                humidity, temperature = Adafruit_DHT.read_retry(sensor, mate.sensorPin)
-                wg.updateTH(mate.name, temperature, humidity)
+                # fetch data
+                # from sensor (if hard wired)
+                if mate.sensorPin != 0:
+                    print("wired")
+                    humidity, temperature = Adafruit_DHT.read_retry(sensor, mate.sensorPin)
+                    wg.update_climate_data(mate.name, temperature, humidity)
 
-            # from data (if remote)
-            else:
-                humidity = mate.humidity
-                temperature = mate.temperature
+                # from data (if remote)
+                else:
+                    humidity = mate.humidity
+                    temperature = mate.temperature
 
-            l2c(mate.name + ": T:" + str(temperature) + " H:" + str(humidity))
+                l2c(mate.name + ": T:" + str(temperature) + " H:" + str(humidity))
 
-            if temperature != 0 and humidity != 0:
-                print("notzero")
-                msg = ""
-                amount = 0
+                if temperature != 0 and humidity != 0:
+                    print("notzero")
+                    msg = ""
+                    amount = 0
 
-                # create notification message
-                if humidity > maxHum:
-                    msg += "The humidity in your room is " + str(round(humidity, 0)) + "%. Open a window! "
-                    amount = humidity - maxHum
-                elif humidity < minHum:
-                    msg += "The humidity in your room is " + str(round(humidity, 0)) + "%. Do some sweatin' "
-                    amount = minHum - humidity
+                    # create notification message
+                    if humidity > maxHum:
+                        msg += "The humidity in your room is " + str(round(humidity, 0)) + "%. Open a window! "
+                        amount = humidity - maxHum
+                    elif humidity < minHum:
+                        msg += "The humidity in your room is " + str(round(humidity, 0)) + "%. Do some sweatin' "
+                        amount = minHum - humidity
 
-                if temperature > maxTemp:
-                    msg += "The temperature in your room is " + str(
-                        round(temperature, 1)) + "\xc2\xb0. Turn down your Radiator!"
-                    amount += temp_handler - maxTemp
-                elif temperature < minTemp:
-                    msg += "The temperature in your room is " + str(
-                        round(temperature, 1)) + "\xc2\xb0. Turn on your Radiator!"
-                    amount += minTemp - temperature
+                    if temperature > maxTemp:
+                        msg += "The temperature in your room is " + str(
+                            round(temperature, 1)) + "\xc2\xb0. Turn down your Radiator!"
+                        amount += temp_handler - maxTemp
+                    elif temperature < minTemp:
+                        msg += "The temperature in your room is " + str(
+                            round(temperature, 1)) + "\xc2\xb0. Turn on your Radiator!"
+                        amount += minTemp - temperature
 
-                # fan setting
-                if amount != 0:
-                    if mate.home:
-                        amount *= 2
-                    else:
-                        amount *= 4
+                    # fan setting
+                    if amount != 0:
+                        if mate.home:
+                            amount *= 2
+                        else:
+                            amount *= 4
 
-                    amount += 10  # minimum
+                        amount += 10  # minimum
 
-                    if amount > 100:
-                        amount = 100
-                print("fan")
-                # notify mate
-                if not mate.notified and msg != "":
-                    # l2c(mate.name + ":" + msg)
-                    wg.setNotified(mate.name, True)
-                    dispatcher.bot.sendMessage(mate.tID, msg)
+                        if amount > 100:
+                            amount = 100
+                    print("fan")
 
-                    muteThread = Thread(target=notifySleep, args=(mate.name,))
-                    muteThread.daemon = True
-                    muteThread.start()
+                    # notify mate
+                    if not mate.notified and msg != "":
+                        # l2c(mate.name + ":" + msg)
+                        wg.set_notified(mate.name, True)
+                        dispatcher.bot.sendMessage(mate.tID, msg)
 
-                if mate.night:
-                    mate.vent.setVent(0)
-                elif not manual:
-                    mate.vent.setVent(amount)
-                l2c(mate.name + "'s fan is set to " + str(amount) + "%")
-        #except:
-        #    startServices()
+                        muteThread = Thread(target=notifySleep, args=(mate.name,))
+                        muteThread.daemon = True
+                        muteThread.start()
 
+                    if mate.night:
+                        mate.vent.setVent(0)
+                    elif not manual:
+                        mate.vent.setVent(amount)
+                    l2c(mate.name + "'s fan is set to " + str(amount) + "%")
+        except:
+            startServices()
 
 def pingService():
     while 1:
         try:
-            for mate in wg.getAll():
+            for mate in wg.get_all():
                 online = False
                 for ip in mate.ip:
                     online = online or (os.system("ping -c 1 -W 5 " + ip + " > /dev/null") == 0)
                     l2c("Pinging " + mate.name + ":" + str(online))
-                wg.setHome(mate.name, online)
+                wg.set_home(mate.name, online)
 
             time.sleep(60)
         except:
@@ -342,7 +342,7 @@ def error_callback(bot, update, error):
 def notifySleep(name):
     l2c("Muting notifications for " + name + " for " + str(notificationLimit) + "s")
     time.sleep(notificationLimit)
-    wg.setNotified(name, False)
+    wg.set_notified(name, False)
     l2c("Unmuting notifications for " + name)
 
 
@@ -419,7 +419,7 @@ def udpRcvService():
             recv = json.loads(data.decode("utf-8"))
             print(recv)
             if len(recv) == 3:
-                wg.updateTHremote(int(recv[0]), float(recv[1]), float(recv[2]))
+                wg.update_remote_climate_data(int(recv[0]), float(recv[1]), float(recv[2]))
         except:
             startServices()
 
