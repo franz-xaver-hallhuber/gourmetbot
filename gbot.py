@@ -16,14 +16,14 @@ import socket
 from objects import *
 
 # init flatmates
-carl = Flatmate('Carl', ["e5823", "DESKTOP-A18AGI2", "android-4e1dfd4a1148ac05"], 10307260, 0, 4, 14)
+carl = Flatmate('Carl', ["e5823", "DESKTOP-A18AGI2", "android-4e1dfd4a1148ac05"], 10307260, 12)
 simon = Flatmate('Simon', ["android-e5cf63a05ae4ea6c", "android-18ef3254c89a664e", "Simons-MBP"], 215807065, 11)
 # peter = Flatmate('Peter', ["android-9fcf94d7fe7938eb","Peters-MBP-2","192.168.178.60"], 52115553, 12)
 stella = Flatmate('Stella', ["android-741115d63e5b6dcc", "STELLA-LAPTOP", "Galaxy-J7", "LAPTOP-SJSQ8ATP"], 200929247,
                   13)
 # andra = Flatmate('Andra', ["Andras-Air","iPhone"])
 
-wg = Flat([carl])
+wg = Flat([carl, simon, stella])
 
 # command list for main menu
 commands = ["Check Temperature", "Check Humidity", "Check who's home", "Set Daytime Mode", "Set Silent Mode",
@@ -256,7 +256,7 @@ def updateVars():
                 # fetch data
                 # from sensor (if hard wired)
                 if mate.sensorPin != 0:
-
+                    print("wired")
                     humidity, temperature = Adafruit_DHT.read_retry(sensor, mate.sensorPin)
                     wg.updateTH(mate.name, temperature, humidity)
 
@@ -268,7 +268,7 @@ def updateVars():
                 l2c(mate.name + ": T:" + str(temperature) + " H:" + str(humidity))
 
                 if temperature != 0 and humidity != 0:
-
+                    print("notzero")
                     msg = ""
                     amount = 0
 
@@ -300,7 +300,7 @@ def updateVars():
 
                         if amount > 100:
                             amount = 100
-
+                    print("fan")
                     # notify mate
                     if not mate.notified and msg != "":
                         # l2c(mate.name + ":" + msg)
@@ -317,8 +317,8 @@ def updateVars():
                         mate.vent.setVent(amount)
 
                     l2c(mate.name + b"'s fan is set to " + str(amount) + "%")
-        except:
-            startServices()
+        #except:
+        #    startServices()
 
 
 def pingService():
@@ -417,7 +417,8 @@ def udpRcvService():
     while 1:
         try:
             data, addr = s.recvfrom(1024)
-            recv = json.loads(data)
+            recv = json.loads(data.decode("utf-8"))
+            print(recv)
             if len(recv) == 3:
                 wg.updateTHremote(int(recv[0]), float(recv[1]), float(recv[2]))
         except:
@@ -530,7 +531,7 @@ l2c('Found ' + str(len(groceryList)) + ' items')
 
 startServices()
 
-sendRebootMessage("Good news everyone, I'm back! You missed me? Please start me: /start")
+# sendRebootMessage("Good news everyone, I'm back! You missed me? Please start me: /start")
 
 l2c('starting updater')
 
