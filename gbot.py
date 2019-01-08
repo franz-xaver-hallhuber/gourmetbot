@@ -248,75 +248,75 @@ def setFanMan(bot, update, args):
 def updateVars():
     while 1:
         time.sleep(10)
-        try:
-            for mate in wg.getAll():
-                humidity = 0
-                temperature = 0
+        #try:
+        for mate in wg.getAll():
+            humidity = 0
+            temperature = 0
 
-                # fetch data
-                # from sensor (if hard wired)
-                if mate.sensorPin != 0:
-                    print("wired")
-                    humidity, temperature = Adafruit_DHT.read_retry(sensor, mate.sensorPin)
-                    wg.updateTH(mate.name, temperature, humidity)
+            # fetch data
+            # from sensor (if hard wired)
+            if mate.sensorPin != 0:
+                print("wired")
+                humidity, temperature = Adafruit_DHT.read_retry(sensor, mate.sensorPin)
+                wg.updateTH(mate.name, temperature, humidity)
 
-                # from data (if remote)
-                else:
-                    humidity = mate.humidity
-                    temperature = mate.temperature
+            # from data (if remote)
+            else:
+                humidity = mate.humidity
+                temperature = mate.temperature
 
-                l2c(mate.name + ": T:" + str(temperature) + " H:" + str(humidity))
+            l2c(mate.name + ": T:" + str(temperature) + " H:" + str(humidity))
 
-                if temperature != 0 and humidity != 0:
-                    print("notzero")
-                    msg = ""
-                    amount = 0
+            if temperature != 0 and humidity != 0:
+                print("notzero")
+                msg = ""
+                amount = 0
 
-                    # create notification message
-                    if humidity > maxHum:
-                        msg += "The humidity in your room is " + str(round(humidity, 0)) + "%. Open a window! "
-                        amount = humidity - maxHum
-                    elif humidity < minHum:
-                        msg += "The humidity in your room is " + str(round(humidity, 0)) + "%. Do some sweatin' "
-                        amount = minHum - humidity
+                # create notification message
+                if humidity > maxHum:
+                    msg += "The humidity in your room is " + str(round(humidity, 0)) + "%. Open a window! "
+                    amount = humidity - maxHum
+                elif humidity < minHum:
+                    msg += "The humidity in your room is " + str(round(humidity, 0)) + "%. Do some sweatin' "
+                    amount = minHum - humidity
 
-                    if temperature > maxTemp:
-                        msg += "The temperature in your room is " + str(
-                            round(temperature, 1)) + "\xc2\xb0. Turn down your Radiator!"
-                        amount += temp_handler - maxTemp
-                    elif temperature < minTemp:
-                        msg += "The temperature in your room is " + str(
-                            round(temperature, 1)) + "\xc2\xb0. Turn on your Radiator!"
-                        amount += minTemp - temperature
+                if temperature > maxTemp:
+                    msg += "The temperature in your room is " + str(
+                        round(temperature, 1)) + "\xc2\xb0. Turn down your Radiator!"
+                    amount += temp_handler - maxTemp
+                elif temperature < minTemp:
+                    msg += "The temperature in your room is " + str(
+                        round(temperature, 1)) + "\xc2\xb0. Turn on your Radiator!"
+                    amount += minTemp - temperature
 
-                    # fan setting
-                    if amount != 0:
-                        if mate.home:
-                            amount *= 2
-                        else:
-                            amount *= 4
+                # fan setting
+                if amount != 0:
+                    if mate.home:
+                        amount *= 2
+                    else:
+                        amount *= 4
 
-                        amount += 10  # minimum
+                    amount += 10  # minimum
 
-                        if amount > 100:
-                            amount = 100
-                    print("fan")
-                    # notify mate
-                    if not mate.notified and msg != "":
-                        # l2c(mate.name + ":" + msg)
-                        wg.setNotified(mate.name, True)
-                        dispatcher.bot.sendMessage(mate.tID, msg)
+                    if amount > 100:
+                        amount = 100
+                print("fan")
+                # notify mate
+                if not mate.notified and msg != "":
+                    # l2c(mate.name + ":" + msg)
+                    wg.setNotified(mate.name, True)
+                    dispatcher.bot.sendMessage(mate.tID, msg)
 
-                        muteThread = Thread(target=notifySleep, args=(mate.name,))
-                        muteThread.daemon = True
-                        muteThread.start()
+                    muteThread = Thread(target=notifySleep, args=(mate.name,))
+                    muteThread.daemon = True
+                    muteThread.start()
 
-                    if mate.night:
-                        mate.vent.setVent(0)
-                    elif not manual:
-                        mate.vent.setVent(amount)
+                if mate.night:
+                    mate.vent.setVent(0)
+                elif not manual:
+                    mate.vent.setVent(amount)
 
-                    l2c(mate.name + b"'s fan is set to " + str(amount) + "%")
+                l2c(mate.name + b"'s fan is set to " + str(amount) + "%")
         #except:
         #    startServices()
 
