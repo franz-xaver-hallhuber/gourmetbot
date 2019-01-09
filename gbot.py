@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os, inspect, sys
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
@@ -137,7 +138,7 @@ def button(bot, update):
             if command_id == 0:
                 bot.send_message(chat_id=update.message.from_user.id, text="Temperature: "
                                                                            + str(
-                    round(wg.get_temp(name), 1)) + "\xc2\xb0.")
+                    round(wg.get_temp(name), 1)) + "\xb0.")
             if command_id == 1:
                 bot.send_message(chat_id=update.message.from_user.id, text="Humidity: "
                                                                            + str(round(wg.humidity(name), 0)) + "%")
@@ -215,7 +216,7 @@ def getTemperature(bot, update, args):
     else:
         try:
             bot.send_message(chat_id=update.message.chat_id, text="Temperature: "
-                                                                  + str(round(wg.get_temp(args[0]), 1)) + "\xc2\xb0.")
+                                                                  + str(round(wg.get_temp(args[0]), 1)) + "\x00\xb0.")
         except:
             bot.send_message(chat_id=update.message.chat_id, text="No user "
                                                                   "named " + args[0])
@@ -282,11 +283,11 @@ def updateVars():
 
                     if temperature > maxTemp:
                         msg += "The temperature in your room is " + str(
-                            round(temperature, 1)) + "\xc2\xb0. Turn down your Radiator!"
+                            round(temperature, 1)) + "\xb0. Turn down your Radiator!"
                         amount += temp_handler - maxTemp
                     elif temperature < minTemp:
                         msg += "The temperature in your room is " + str(
-                            round(temperature, 1)) + "\xc2\xb0. Turn on your Radiator!"
+                            round(temperature, 1)) + "\xb0. Turn on your Radiator!"
                         amount += minTemp - temperature
 
                     # fan setting
