@@ -43,10 +43,10 @@ shopcommands = ["Back to main menu", "Back"]
 groceryList = []
 
 
-def start(bot, update):
+def start():
     reply_markup = ReplyKeyboardMarkup(mainKeyboard)
-    update.message.reply_text('Please select', reply_markup=reply_markup)
-    return DEFAULT
+    for mate in wg.get_all():
+        dispatcher.bot.send_message(mate.tID, 'Please select', reply_markup=reply_markup)
 
 
 def readGroceryList():
@@ -536,3 +536,5 @@ startServices()
 l2c('starting updater')
 
 updater.start_polling()
+
+start()
