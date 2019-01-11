@@ -25,7 +25,7 @@ stella = Flatmate('Stella', ["android-741115d63e5b6dcc", "STELLA-LAPTOP", "Galax
                   13)
 # andra = Flatmate('Andra', ["Andras-Air","iPhone"])
 
-wg = Flat([carl, simon, stella])
+wg = Flat([carl])
 
 # command list for main menu
 commands = ["Check Temperature", "Check Humidity", "Check who's home", "Set Daytime Mode", "Set Silent Mode",
