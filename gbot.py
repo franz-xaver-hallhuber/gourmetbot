@@ -451,7 +451,7 @@ def shop_reminder_time_secs():
     remind_time = datetime(now.year, now.month, now.day, 18)
     remind_time += timedelta(inc)
     # start scheduler with time difference
-    return remind_time - now
+    return (remind_time - now).seconds
 
 
 # threads
