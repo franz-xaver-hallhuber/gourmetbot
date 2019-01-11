@@ -22,13 +22,14 @@ sys.stdout = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gm
 sys.stderr = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gmtime()) + "_gourmetbot_err.log", 'w+')
 
 # init flatmates
-carl = Flatmate('Carl', ["DESKTOP-A18AGI2", "android-4e1dfd4a1148ac05"], 10307260, 12)
-simon = Flatmate('Simon', ["android-e5cf63a05ae4ea6c", "android-18ef3254c89a664e", "Simons-MBP"], 215807065, 11)
+carl = Flatmate('Carl', ["192.168.178.30", "192.168.178.105"], 10307260, 12)
+simon = Flatmate('Simon', ["192.168.178.78", "192.168.178.36"], 215807065, 11)
 # peter = Flatmate('Peter', ["android-9fcf94d7fe7938eb","Peters-MBP-2","192.168.178.60"], 52115553, 12)
-stella = Flatmate('Stella', ["Galaxy-J7", "LAPTOP-SJSQ8ATP"], 200929247, 13)
-# andra = Flatmate('Andra', ["Andras-Air","iPhone"])
+stella = Flatmate('Stella', ["192.168.178.22", "192.168.178.98"], 200929247, 13)
+andra = Flatmate('Andra', ["192.168.178.118", "192.168.178.117"])
+hunglinger = Flatmate('Hunglinger', ["192.168.178.26"])
 
-wg = Flat([carl, simon, stella])
+wg = Flat([carl, simon, stella, andra])
 
 # command list for main menu
 commands = ["Check Temperature", "Check Humidity", "Check who's home", "Set Daytime Mode", "Set Silent Mode",
