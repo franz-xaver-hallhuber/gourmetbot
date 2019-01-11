@@ -18,24 +18,8 @@ import socket
 
 from objects import *
 
-# logging
-logging.basicConfig(
-   level=logging.DEBUG,
-   format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
-   filename=currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gmtime()) + "_gourmetbot.log",
-   filemode='w+'
-)
-
-
-logger = logging.getLogger('STDOUT')
-
-stdhandler = logging.StreamHandler(sys.stdout)
-stdhandler.setLevel(logging.INFO)
-logger.addHandler(stdhandler)
-
-errhandler = logging.StreamHandler(sys.stderr)
-errhandler.setLevel(logging.ERROR)
-logger.addHandler(errhandler)
+sys.stdout = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gmtime()) + "_gourmetbot_info.log", 'w+')
+sys.stderr = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gmtime()) + "_gourmetbot_err.log", 'w+')
 
 def l2c(msg):
     print("[" + time.strftime("%d/%m %H:%M:%S", time.gmtime()) + "] " + msg)
