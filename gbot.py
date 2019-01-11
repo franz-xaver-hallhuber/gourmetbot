@@ -38,7 +38,7 @@ class StreamToLogger(object):
 logging.basicConfig(
    level=logging.DEBUG,
    format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
-   filename=currentdir + "/logs/" + time.strftime("%d/%m %H:%M:%S", time.gmtime()) + "_gourmetbot.log",
+   filename=currentdir + "/logs/" + time.strftime("%d.%m_%H:%M:%S", time.gmtime()) + "_gourmetbot.log",
    filemode='w'
 )
 
