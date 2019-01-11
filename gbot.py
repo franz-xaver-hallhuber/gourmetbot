@@ -567,7 +567,8 @@ l2c('Found ' + str(len(groceryList)) + ' items')
 
 startServices()
 
-broadcast_message("You thought I'm dead? I'm f**ing alive, baby! Check out these buttons: Write or tap /start")
+broadcast_message("You thought I'm dead? I'm f**ing alive, baby! Check out these buttons: Write or tap /start"
+                  "  (Also in case I don't work anymore :D)")
 
 l2c('starting updater')
 
