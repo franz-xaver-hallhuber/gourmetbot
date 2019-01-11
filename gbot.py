@@ -431,7 +431,7 @@ def send_shopping_message():
                       ", ".join(groceryList))
 
 
-def shopReminder(args):
+def shopReminder():
     s = sched.scheduler(time.time, time.sleep)
     while 1:
         s.enter(shop_reminder_time_secs())
