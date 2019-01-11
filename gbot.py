@@ -18,17 +18,14 @@ import socket
 
 from objects import *
 
-#sys.stdout = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gmtime()) + "_gourmetbot_info.log", 'w+')
-#sys.stderr = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gmtime()) + "_gourmetbot_err.log", 'w+')
-
-
+sys.stdout = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gmtime()) + "_gourmetbot_info.log", 'w+')
+sys.stderr = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gmtime()) + "_gourmetbot_err.log", 'w+')
 
 # init flatmates
 carl = Flatmate('Carl', ["DESKTOP-A18AGI2", "android-4e1dfd4a1148ac05"], 10307260, 12)
 simon = Flatmate('Simon', ["android-e5cf63a05ae4ea6c", "android-18ef3254c89a664e", "Simons-MBP"], 215807065, 11)
 # peter = Flatmate('Peter', ["android-9fcf94d7fe7938eb","Peters-MBP-2","192.168.178.60"], 52115553, 12)
-stella = Flatmate('Stella', ["Galaxy-J7", "LAPTOP-SJSQ8ATP"], 200929247,
-                  13)
+stella = Flatmate('Stella', ["Galaxy-J7", "LAPTOP-SJSQ8ATP"], 200929247, 13)
 # andra = Flatmate('Andra', ["Andras-Air","iPhone"])
 
 wg = Flat([carl, simon, stella])
