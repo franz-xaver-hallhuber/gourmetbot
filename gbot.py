@@ -25,7 +25,7 @@ stella = Flatmate('Stella', ["android-741115d63e5b6dcc", "STELLA-LAPTOP", "Galax
                   13)
 # andra = Flatmate('Andra', ["Andras-Air","iPhone"])
 
-wg = Flat([carl])
+wg = Flat([carl, simon, stella])
 
 # command list for main menu
 commands = ["Check Temperature", "Check Humidity", "Check who's home", "Set Daytime Mode", "Set Silent Mode",
@@ -250,92 +250,91 @@ def setFanMan(bot, update, args):
 def updateVars():
     while 1:
         time.sleep(10)
-        #try:
-        for mate in wg.get_all():
-            humidity = 0
-            temperature = 0
+        try:
+            for mate in wg.get_all():
+                humidity = 0
+                temperature = 0
 
-            # fetch data
-            # from sensor (if hard wired)
-            if mate.sensorPin != 0:
-                print("wired")
-                humidity, temperature = Adafruit_DHT.read_retry(sensor, mate.sensorPin)
-                wg.update_climate_data(mate.name, temperature, humidity)
+                # fetch data
+                # from sensor (if hard wired)
+                if mate.sensorPin != 0:
+                    print("wired")
+                    humidity, temperature = Adafruit_DHT.read_retry(sensor, mate.sensorPin)
+                    wg.update_climate_data(mate.name, temperature, humidity)
 
-            # from data (if remote)
-            else:
-                humidity = mate.humidity
-                temperature = mate.temperature
+                # from data (if remote)
+                else:
+                    humidity = mate.humidity
+                    temperature = mate.temperature
 
-            l2c(mate.name + ": T:" + str(temperature) + " H:" + str(humidity))
+                l2c(mate.name + ": T:" + str(temperature) + " H:" + str(humidity))
 
-            if temperature != 0 and humidity != 0:
-                print("notzero")
-                msg = ""
-                amount = 0
+                if temperature != 0 and humidity != 0:
+                    print("notzero")
+                    msg = ""
+                    amount = 0
 
-                # create notification message
-                if humidity > maxHum:
-                    msg += "The humidity in your room is " + str(round(humidity, 0)) + "%. Open a window! "
-                    amount = humidity - maxHum
-                elif humidity < minHum:
-                    msg += "The humidity in your room is " + str(round(humidity, 0)) + "%. Do some sweatin' "
-                    amount = minHum - humidity
+                    # create notification message
+                    if humidity > maxHum:
+                        msg += "The humidity in your room is " + str(round(humidity, 0)) + "%. Open a window! "
+                        amount = humidity - maxHum
+                    elif humidity < minHum:
+                        msg += "The humidity in your room is " + str(round(humidity, 0)) + "%. Do some sweatin' "
+                        amount = minHum - humidity
 
-                if temperature > maxTemp:
-                    msg += "The temperature in your room is " + str(
-                        round(temperature, 1)) + "\xb0. Turn down your Radiator!"
-                    amount += temp_handler - maxTemp
-                elif temperature < minTemp:
-                    msg += "The temperature in your room is " + str(
-                        round(temperature, 1)) + "\xb0. Turn on your Radiator!"
-                    amount += minTemp - temperature
+                    if temperature > maxTemp:
+                        msg += "The temperature in your room is " + str(
+                            round(temperature, 1)) + "\xb0. Turn down your Radiator!"
+                        amount += temp_handler - maxTemp
+                    elif temperature < minTemp:
+                        msg += "The temperature in your room is " + str(
+                            round(temperature, 1)) + "\xb0. Turn on your Radiator!"
+                        amount += minTemp - temperature
 
-                # fan setting
-                if amount != 0:
-                    if mate.home:
-                        amount *= 2
-                    else:
-                        amount *= 4
+                    # fan setting
+                    if amount != 0:
+                        if mate.home:
+                            amount *= 2
+                        else:
+                            amount *= 4
 
-                    amount += 10  # minimum
+                        amount += 10  # minimum
 
-                    if amount > 100:
-                        amount = 100
-                print("fan")
+                        if amount > 100:
+                            amount = 100
+                    print("fan")
 
-                # notify mate
-                if not mate.notified and msg != "":
-                    # l2c(mate.name + ":" + msg)
-                    wg.set_notified(mate.name, True)
-                    dispatcher.bot.sendMessage(mate.tID, msg)
+                    # notify mate
+                    if not mate.notified and msg != "":
+                        # l2c(mate.name + ":" + msg)
+                        wg.set_notified(mate.name, True)
+                        dispatcher.bot.sendMessage(mate.tID, msg)
 
-                    muteThread = Thread(target=notifySleep, args=(mate.name,))
-                    muteThread.daemon = True
-                    muteThread.start()
+                        muteThread = Thread(target=notifySleep, args=(mate.name,))
+                        muteThread.daemon = True
+                        muteThread.start()
 
-                if mate.night:
-                    mate.vent.setVent(0)
-                elif not manual:
-                    mate.vent.setVent(amount)
-                l2c(mate.name + "'s fan is set to " + str(amount) + "%")
-        #except:
-        #    startServices()
+                    if mate.night:
+                        mate.vent.setVent(0)
+                    elif not manual:
+                        mate.vent.setVent(amount)
+                    l2c(mate.name + "'s fan is set to " + str(amount) + "%")
+        except:
+            startServices()
 
 def pingService():
     while 1:
-        # try:
-        for mate in wg.get_all():
-            online = False
-            for ip in mate.ip:
-                online = online or (os.system("ping -c 1 -W 5 " + ip + " > /dev/null") == 0)
-                l2c("Pinging " + mate.name + ":" + str(online))
-            wg.set_home(mate.name, online)
+        try:
+            for mate in wg.get_all():
+                online = False
+                for ip in mate.ip:
+                    online = online or (os.system("ping -c 1 -W 5 " + ip + " > /dev/null") == 0)
+                    l2c("Pinging " + mate.name + ":" + str(online))
+                wg.set_home(mate.name, online)
 
-
-        time.sleep(60)
-        # except:
-        #    startServices()
+            time.sleep(60)
+        except:
+            startServices()
 
 
 def error_callback(bot, update, error):
@@ -417,14 +416,14 @@ def createKeyboardFromList():
 
 def udpRcvService():
     while 1:
-        #try:
-        data, addr = s.recvfrom(1024)
-        recv = json.loads(data.decode("utf-8"))
-        print(recv)
-        if len(recv) == 3:
-            wg.update_remote_climate_data(int(recv[0]), float(recv[1]), float(recv[2]))
-        #except:
-        #    startServices()
+        try:
+            data, addr = s.recvfrom(1024)
+            recv = json.loads(data.decode("utf-8"))
+            print(recv)
+            if len(recv) == 3:
+                wg.update_remote_climate_data(int(recv[0]), float(recv[1]), float(recv[2]))
+        except:
+            startServices()
 
 
 def send_shopping_message():
