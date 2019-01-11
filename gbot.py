@@ -29,7 +29,7 @@ stella = Flatmate('Stella', ["192.168.178.22", "192.168.178.98"], 200929247, 13)
 andra = Flatmate('Andra', ["192.168.178.118", "192.168.178.117"])
 hunglinger = Flatmate('Hunglinger', ["192.168.178.26"])
 
-wg = Flat([carl, simon, stella, andra])
+wg = Flat([carl, simon, stella, andra, hunglinger])
 
 # command list for main menu
 commands = ["Check Temperature", "Check Humidity", "Check who's home", "Set Daytime Mode", "Set Silent Mode",
