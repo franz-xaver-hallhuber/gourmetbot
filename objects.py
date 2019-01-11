@@ -5,6 +5,9 @@ from vent import Vent
 class UserNotRegisteredException(Exception):
     pass
 
+def l2c(msg):
+    print("[" + time.strftime("%d/%m %H:%M:%S", time.gmtime()) + "] " + msg)
+
 
 class Flatmate:
     def __init__(self, name='', ip=None, t_id=0, int_id=0, sensor_pin=0, vent_pin=0, temperature=0, humidity=0, home=False, night=False):

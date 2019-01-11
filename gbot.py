@@ -21,8 +21,7 @@ from objects import *
 #sys.stdout = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gmtime()) + "_gourmetbot_info.log", 'w+')
 #sys.stderr = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gmtime()) + "_gourmetbot_err.log", 'w+')
 
-def l2c(msg):
-    print("[" + time.strftime("%d/%m %H:%M:%S", time.gmtime()) + "] " + msg)
+
 
 # init flatmates
 carl = Flatmate('Carl', ["DESKTOP-A18AGI2", "android-4e1dfd4a1148ac05"], 10307260, 12)
