@@ -18,8 +18,8 @@ import socket
 
 from objects import *
 
-#sys.stdout = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gmtime()) + "_gourmetbot_info.log", 'w+')
-#sys.stderr = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gmtime()) + "_gourmetbot_err.log", 'w+')
+sys.stdout = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gmtime()) + "_gourmetbot_info.log", 'w+')
+sys.stderr = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gmtime()) + "_gourmetbot_err.log", 'w+')
 
 # init flatmates
 carl = Flatmate('Carl', ["192.168.178.30", "192.168.178.105"], 10307260, 12)
