@@ -2,10 +2,6 @@ import time
 from vent import Vent
 
 
-def l2c(msg):
-    print("[" + time.strftime("%d/%m %H:%M:%S", time.gmtime()) + "] " + msg)
-
-
 class UserNotRegisteredException(Exception):
     pass
 

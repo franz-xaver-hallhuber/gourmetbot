@@ -13,15 +13,51 @@ import logging
 import Adafruit_DHT
 import time
 import json
+
 import socket
 
 from objects import *
 
+# logging
+
+
+class StreamToLogger(object):
+   """
+   Fake file-like stream object that redirects writes to a logger instance.
+   """
+   def __init__(self, logger, log_level=logging.INFO):
+      self.logger = logger
+      self.log_level = log_level
+      self.linebuf = ''
+
+   def write(self, buf):
+      for line in buf.rstrip().splitlines():
+         self.logger.log(self.log_level, line.rstrip())
+
+
+logging.basicConfig(
+   level=logging.DEBUG,
+   format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
+   filename=currentdir + "/logs/" + time.strftime("%d/%m %H:%M:%S", time.gmtime()) + "_gourmetbot.log",
+   filemode='w'
+)
+
+stdout_logger = logging.getLogger('STDOUT')
+sl = StreamToLogger(stdout_logger, logging.INFO)
+sys.stdout = sl
+
+stderr_logger = logging.getLogger('STDERR')
+sl = StreamToLogger(stderr_logger, logging.ERROR)
+sys.stderr = sl
+
+def l2c(msg):
+    print("[" + time.strftime("%d/%m %H:%M:%S", time.gmtime()) + "] " + msg)
+
 # init flatmates
-carl = Flatmate('Carl', ["e5823", "DESKTOP-A18AGI2", "android-4e1dfd4a1148ac05"], 10307260, 12)
+carl = Flatmate('Carl', ["DESKTOP-A18AGI2", "android-4e1dfd4a1148ac05"], 10307260, 12)
 simon = Flatmate('Simon', ["android-e5cf63a05ae4ea6c", "android-18ef3254c89a664e", "Simons-MBP"], 215807065, 11)
 # peter = Flatmate('Peter', ["android-9fcf94d7fe7938eb","Peters-MBP-2","192.168.178.60"], 52115553, 12)
-stella = Flatmate('Stella', ["android-741115d63e5b6dcc", "STELLA-LAPTOP", "Galaxy-J7", "LAPTOP-SJSQ8ATP"], 200929247,
+stella = Flatmate('Stella', ["Galaxy-J7", "LAPTOP-SJSQ8ATP"], 200929247,
                   13)
 # andra = Flatmate('Andra', ["Andras-Air","iPhone"])
 
