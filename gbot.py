@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-import os, inspect, sys
+import os, inspect, sys, sched, time
+from datetime import datetime, timedelta
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0,currentdir)
@@ -60,7 +61,7 @@ def readGroceryList():
     groceryFile.close()
 
 
-def sendRebootMessage(msg):
+def broadcast_message(msg):
     for mate in wg.get_all():
         if mate.tID != 0 and msg != "":
             dispatcher.bot.sendMessage(mate.tID, msg)
@@ -425,10 +426,40 @@ def udpRcvService():
             startServices()
 
 
+def send_shopping_message():
+    broadcast_message("You have %s on the shopping list." %
+                      ", ".join(groceryList))
+
+
+def shopReminder(args):
+    s = sched.scheduler(time.time, time.sleep)
+    while 1:
+        s.enter(shop_reminder_time_secs())
+        l2c("Shopping reminder set: %s" % s.queue)
+        s.run()
+        send_shopping_message()
+
+
+def shop_reminder_time_secs():
+    # schedule shopping reminder
+    # time now
+    now = datetime.now()
+    # time today at 6pm
+    inc = 0
+    if now.hour <= 18:
+        # add one day
+        inc = 1
+    remind_time = datetime(now.year, now.month, now.day, 18)
+    remind_time += timedelta(inc)
+    # start scheduler with time difference
+    return remind_time - now
+
+
 # threads
 updateThread = Thread(target=updateVars)
 pingThread = Thread(target=pingService)
 udpThread = Thread(target=udpRcvService)
+shoppingReminderThread = Thread(target=shopReminder)
 
 
 def startServices():
@@ -436,6 +467,7 @@ def startServices():
     global updateThread
     global pingThread
     global udpThread
+    global shoppingReminderThread
 
     if updateThread.isAlive():
         l2c("UpdateThread still alive")
@@ -448,7 +480,6 @@ def startServices():
     if pingThread.isAlive():
         l2c("PintThread still alive")
     else:
-
         pingThread = Thread(target=pingService)
         pingThread.daemon = True
         pingThread.start()
@@ -460,6 +491,14 @@ def startServices():
         udpThread = Thread(target=udpRcvService)
         udpThread.daemon = True
         udpThread.start()
+
+    l2c('starting shopping reminder thread')
+    if shoppingReminderThread.isAlive():
+        l2c("Shopping Reminder still active")
+    else:
+        shoppingReminderThread = Thread(target=shopReminder)
+        shoppingReminderThread.daemon = True
+        shoppingReminderThread.start()
 
 
 updater = Updater(token='452396346:AAEKPdIiwuFcrQbNxZTlUAkZOLWsxEQ_C5I')
