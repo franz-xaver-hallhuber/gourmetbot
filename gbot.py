@@ -44,10 +44,10 @@ shopcommands = ["Back to main menu", "Back"]
 groceryList = []
 
 
-def start():
+def start(bot, update):
     reply_markup = ReplyKeyboardMarkup(mainKeyboard)
-    for mate in wg.get_all():
-        dispatcher.bot.send_message(mate.tID, 'Please select', reply_markup=reply_markup)
+    update.message.reply_text('Please select', reply_markup=reply_markup)
+    return DEFAULT
 
 
 def readGroceryList():
