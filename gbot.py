@@ -574,5 +574,3 @@ startServices()
 l2c('starting updater')
 
 updater.start_polling()
-
-start()
