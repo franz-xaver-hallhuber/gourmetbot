@@ -270,7 +270,6 @@ def updateVars():
                 l2c(mate.name + ": T:" + str(temperature) + " H:" + str(humidity))
 
                 if temperature != 0 and humidity != 0:
-                    print("notzero")
                     msg = ""
                     amount = 0
 
@@ -302,7 +301,6 @@ def updateVars():
 
                         if amount > 100:
                             amount = 100
-                    print("fan")
 
                     # notify mate
                     if not mate.notified and msg != "":
