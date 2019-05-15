@@ -22,14 +22,14 @@ sys.stdout = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gm
 sys.stderr = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gmtime()) + "_gourmetbot_err.log", 'w+')
 
 # init flatmates
-carl = Flatmate('Carl', ["192.168.178.30", "192.168.178.105"], 10307260)
+carl = Flatmate('Carl', ["192.168.178.30", "192.168.178.105"], 10307260, 12)
 simon = Flatmate('Simon', ["192.168.178.78", "192.168.178.36"], 215807065, 11)
 # peter = Flatmate('Peter', ["android-9fcf94d7fe7938eb","Peters-MBP-2","192.168.178.60"], 52115553, 12)
 stella = Flatmate('Stella', ["192.168.178.22", "192.168.178.98"], 200929247, 13)
-saif = Flatmate('Saif', ["192.168.178.32", "192.168.178.54"], 772411284, 12)
-# hunglinger = Flatmate('Hunglinger', ["192.168.178.26"], 218436717, 13)
+andra = Flatmate('Andra', ["192.168.178.118", "192.168.178.117"])
+hunglinger = Flatmate('Hunglinger', ["192.168.178.26"], )
 
-wg = Flat([carl, simon, stella, saif])
+wg = Flat([carl, simon, stella, andra, hunglinger])
 
 # command list for main menu
 commands = ["Check Temperature", "Check Humidity", "Check who's home", "Set Daytime Mode", "Set Silent Mode",
@@ -418,7 +418,7 @@ def createKeyboardFromList():
 
 def udpRcvService():
     while 1:
-	        # try:
+        # try:
         data, addr = s.recvfrom(1024)
         recv = json.loads(data.decode("utf-8"))
         print(recv)
@@ -429,18 +429,16 @@ def udpRcvService():
 
 
 def send_shopping_message():
-    if len(groceryList) > 0:
-        broadcast_message("You have %s on the shopping list." %
+    broadcast_message("You have %s on the shopping list." %
                       ", ".join(groceryList))
 
 
 def shopReminder():
     s = sched.scheduler(time.time, time.sleep)
     while 1:
-        s.enterabs(shop_reminder_time_secs(), 1, send_shopping_message)
+        s.enter(shop_reminder_time_secs(), 1, send_shopping_message)
         l2c("Shopping reminder set: %s" % s.queue)
         s.run()
-        time.sleep(60)
 
 
 def shop_reminder_time_secs():
@@ -449,20 +447,13 @@ def shop_reminder_time_secs():
     now = datetime.now()
     # time today at 6pm
     inc = 0
-    if now.hour >= 18:
-        # add one day if after 6pm
+    if now.hour <= 18:
+        # add one day
         inc = 1
-        # add one more day if it's Saturday
-        if now.weekday == 5:
-            inc == 2
-    # add one day if it's Sunday before 6
-    if now.weekday == 6:
-        inc = 1
-
-    # time in seconds since epoch
-    remind_time = datetime(now.year, now.month, now.day + inc, 18).timestamp()
-
-    return remind_time
+    remind_time = datetime(now.year, now.month, now.day, 18)
+    remind_time += timedelta(inc)
+    # start scheduler with time difference
+    return (remind_time - now).seconds
 
 
 # threads
@@ -517,8 +508,6 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - '
                            '%(message)s', level=logging.INFO)
 sensor = Adafruit_DHT.DHT22
 
-print("configured sensor")
-
 # threads
 # global updateThread, pingThread, udpThread
 
@@ -541,8 +530,6 @@ maxHum = 65
 notificationLimit = 5 * 60
 silent = False
 manual = False
-
-print("configure handlers")
 
 add_item_handler = MessageHandler(Filters.text, addShoppingItem)
 remove_item_handler = MessageHandler(Filters.text, removeShoppingItem)
@@ -584,7 +571,7 @@ l2c('Found ' + str(len(groceryList)) + ' items')
 
 startServices()
 
-broadcast_message("Sorry, went out of power :( Please push /start. Love, your GoutmetBot.")
+#broadcast_message("Still finding myself. Push /start. Love, your GoutmetBot.")
 
 l2c('starting updater')
 

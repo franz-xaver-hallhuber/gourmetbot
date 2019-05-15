@@ -117,3 +117,5 @@ dmypy.json
 e.pub
 
 groceries.list
+/log
+nohup

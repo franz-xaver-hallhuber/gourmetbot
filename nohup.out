@@ -1,0 +1,7 @@
+PING e5823.fritz.box (192.168.178.28) 56(84) bytes of data.
+From gourmetpi.fritz.box (192.168.178.73) icmp_seq=1 Destination Host Unreachable
+
+--- e5823.fritz.box ping statistics ---
+1 packets transmitted, 0 received, +1 errors, 100% packet loss, time 0ms
+
+256
