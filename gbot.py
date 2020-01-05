@@ -24,23 +24,31 @@ sys.stderr = open(currentdir + "/log/" + time.strftime("%d.%m_%H:%M:%S", time.gm
 # init flatmates
 carl = Flatmate('Carl', ["192.168.178.30", "192.168.178.105"], 10307260)
 simon = Flatmate('Simon', ["192.168.178.78", "192.168.178.36"], 215807065, 11)
-# peter = Flatmate('Peter', ["android-9fcf94d7fe7938eb","Peters-MBP-2","192.168.178.60"], 52115553, 12)
 stella = Flatmate('Stella', ["192.168.178.22", "192.168.178.98"], 200929247, 13)
 saif = Flatmate('Saif', ["192.168.178.32", "192.168.178.54"], 772411284, 12)
-# hunglinger = Flatmate('Hunglinger', ["192.168.178.26"], 218436717, 13)
 
 wg = Flat([carl, simon, stella, saif])
 
 # command list for main menu
-commands = ["Check Temperature", "Check Humidity", "Check who's home", "Set Daytime Mode", "Set Silent Mode",
-            "/Shopping"]
-mainKeyboard = [[KeyboardButton(commands[0], callback_data='1'),
-                 KeyboardButton(commands[1], callback_data='2')],
-                [KeyboardButton(commands[2], callback_data='3'),
-                 KeyboardButton(commands[5], callback_data='6')],
-                [KeyboardButton(commands[3], callback_data='4'),
-                 KeyboardButton(commands[4], callback_data='5')]]
+mainKeyboard = [[]]
+main_commands_bib = {
+    "1": "Check Temperature",
+    "2": "Check Humidity",
+    "3": "Check who's home",
+    "4": "/Shopping",
+    "5": "/Chores"
+}
 
+for k,v in main_commands_bib.items():
+    mainKeyboard.append([KeyboardButton(v, callback_data=k)])
+
+""" main_commands = ["Check Temperature", "Check Humidity", "Check who's home", "Set Daytime Mode", "Set Silent Mode",
+            "/Shopping"]
+mainKeyboard = [[KeyboardButton(main_commands[0], callback_data='1'),
+                 KeyboardButton(main_commands[1], callback_data='2')],
+                [KeyboardButton(main_commands[2], callback_data='3'),
+                 KeyboardButton(main_commands[5], callback_data='6')]]
+ """
 # shopping commands
 shopcommands = ["Back to main menu", "Back"]
 
@@ -136,8 +144,9 @@ def button(bot, update):
     # query = update.callback_query
     l2c("user " + str(update.message.from_user.id) + " sent request " + update.message.text)
     # bot.edit_message_text(text="Selected option: {}".format(query.data), chat_id=query.message.chat_id, message_id=query.message.message_id)
-    if update.message.text in commands:
-        command_id = commands.index(update.message.text)
+    if update.message.text in main_commands_bib.values():
+        # TODO: Get Key from value
+        command_id = main_commands_bib.index(update.message.text)
         name = wg.get_name_from_telegram_id(update.message.from_user.id)
         try:
             if command_id == 0:
@@ -349,22 +358,6 @@ def notifySleep(name):
     wg.set_notified(name, False)
     l2c("Unmuting notifications for " + name)
 
-
-def addShoppingItem(bot, update):
-    # print '----addhandler'
-    if update.message.text == shopcommands[1]:
-        groceryKeyboard = [[KeyboardButton(shopcommands[1])]]
-        groceryKeyboard.extend(createKeyboardFromList())
-        update.message.reply_text('Please tap items to remove', reply_markup=ReplyKeyboardMarkup(groceryKeyboard))
-        return REMOVEGROCERIES
-    else:
-        l2c('Add shopping item' + update.message.text)
-        groceryList.append(update.message.text)
-        groceryKeyboard = [[KeyboardButton(shopcommands[1])]]
-        groceryKeyboard.extend(createKeyboardFromList())
-        update.message.reply_text('Please send items to add', reply_markup=ReplyKeyboardMarkup(groceryKeyboard))
-
-
 def removeShoppingItem(bot, update):
     # print '----removehandler: ' + update.message.text
     if update.message.text == shopcommands[0]:
@@ -396,7 +389,7 @@ def shopping_entry(bot, update):
 
     update.message.reply_text('Please tap items to remove. Send message to add items.',
                               reply_markup=ReplyKeyboardMarkup(groceryKeyboard))
-    return REMOVEGROCERIES
+    return GROCERIES
 
 
 def createKeyboardFromList():
@@ -523,7 +516,7 @@ print("configured sensor")
 # global updateThread, pingThread, udpThread
 
 # stati
-DEFAULT, ADDGROCERIES, REMOVEGROCERIES = range(3)
+DEFAULT, GROCERIES = range(2)
 
 ## network config
 PORT = 5000
@@ -542,10 +535,9 @@ notificationLimit = 5 * 60
 silent = False
 manual = False
 
-print("configure handlers")
+l2c("configure handlers")
 
-add_item_handler = MessageHandler(Filters.text, addShoppingItem)
-remove_item_handler = MessageHandler(Filters.text, removeShoppingItem)
+shopping_handler = MessageHandler(Filters.text, removeShoppingItem)
 
 start_handler = CommandHandler('start', start)
 hum_handler = CommandHandler('humidity', getHumidity, pass_args=True)
@@ -560,8 +552,7 @@ fan_manual = CommandHandler('setfan', setFanMan, pass_args=True)
 
 main_handler = MessageHandler(Filters.text, button)
 
-allstates = {REMOVEGROCERIES: [remove_item_handler],
-             ADDGROCERIES: [add_item_handler],
+allstates = {GROCERIES: [shopping_handler],
              DEFAULT: [main_handler, shopping_init]}
 
 ze_handler = ConversationHandler(entry_points=[start_handler], states=allstates, fallbacks=[main_handler])
