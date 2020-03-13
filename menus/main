@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu name="main">
-    <menuitem name="Check Room Climate"/>
+    <menuitem name="Check Your Room Climate"/>
+    <menuitem name="Check who's Home"/>
     <menuitem name="Groceries"/>
     <menuitem name="Chores"/>
 </menu>

@@ -1,32 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu name="chores">
+<menu name="Chores">
     <menuitem name="Kitchen">
-        <menuitem name="Cleaned Counter and Stove"/>
-        <menuitem name="Started Dishwasher"/>
-        <menuitem name="Emptied Dishwasher"/>
-        <menuitem name="Cleaned Oven"/>
-        <menuitem name="Cleaned Fridge"/>
+        <menuitem name="Stove">
+            <menuitem name="Cleaned Oven"/>
+            <menuitem name="Cleaned Cooker Hood"/>
+            <menuitem name="Washed Exhaust Filters"/>
+        </menuitem>
+        <menuitem name="Counter">
+            <menuitem name="Cleaned Counter and Stovetop"/>
+            <menuitem name="Renewed Counter Sealing"/>
+        </menuitem>
+        <menuitem name="Fridge">
+            <menuitem name="Cleaned Fridge"/>
+            <menuitem name="Sorted out old Food"/>
+        </menuitem>
+        <menuitem name="Dishwasher">
+            <menuitem name="Started Dishwasher"/>
+            <menuitem name="Emptied Dishwasher"/>
+            <menuitem name="Cleaned Dishwasher"/>
+        </menuitem>
+        <menuitem name="Waste">
+            <menuitem name="Took out General Waste"/>
+            <menuitem name="Took out Organic Waste"/>
+            <menuitem name="Took out Paper Trash"/>
+        </menuitem>
+        <menuitem name="Cabinet">
+            <menuitem name="Cleaned Kitchen Cabinet"/>
+            <menuitem name="Organized Items"/>
+        </menuitem>
         <menuitem name="Vacuumed Floor"/>
         <menuitem name="Mopped Floor"/>
-        <menuitem name="Cleaned Cooker Hood"/>
-        <menuitem name="Washed Exhaust Filters"/>
-        <menuitem name="Cleaned Dishwasher"/>
         <menuitem name="Cleaned Window"/>
-        <menuitem name="Took out General Waste"/>
-        <menuitem name="Took out Organic Waste"/>
-        <menuitem name="Took out Paper Trash"/>
         <menuitem name="Washed Carpet"/>
-        <menuitem name="Cleaned Kitchen Cabinet"/>
         <menuitem name="Replaced Lightbulb"/>
-        <menuitem name="Renewed Counter Sealing"/>
     </menuitem>
     <menuitem name="Bathroom">
-        <menuitem name="Cleaned Sink"/>
-        <menuitem name="Cleaned Bathtub"/>
-        <menuitem name="Emptied Lint Filter"/>
+        <menuitem name="Washing Machine">
+            <menuitem name="Emptied Lint Filter"/>
+            <menuitem name="Cleaned Washing Machine"/>
+            <menuitem name="Washed Towels"/>
+        </menuitem>
+        <menuitem name="Fixtures">
+            <menuitem name="Cleaned Sink"/>
+            <menuitem name="Cleaned Bathtub"/>
+        </menuitem>
         <menuitem name="Vacuumed Floor"/>
         <menuitem name="Mopped Floor"/>
-        <menuitem name="Cleaned Washing Machine"/>
         <menuitem name="Cleaned Window"/>
         <menuitem name="Cleaned Cabinets"/>
         <menuitem name="Replaced Lightbulb"/>
@@ -42,15 +61,21 @@
         <menuitem name="Replaced Lightbulb"/>
     </menuitem>
     <menuitem name="Hallway">
+        <menuitem name="Trash">
+            <menuitem name="Took out Plastic Trash"/>
+            <menuitem name="Recycled old Batteries"/>
+        </menuitem>
+        <menuitem name="Cabinets">
+            <menuitem name="Dusted off Cabinets"/>
+            <menuitem name="Washed Hats"/>
+        </menuitem>
+        <menuitem name="Printer">
+            <menuitem name="Bought Printer Ink/Toner"/>
+            <menuitem name="Replaced Printer Ink/Toner"/>
+        </menuitem>
         <menuitem name="Vacuumed Floor"/>
         <menuitem name="Mopped Floor"/>
-        <menuitem name="Took out Plastic Trash"/>
-        <menuitem name="Recycled old Batteries"/>
-        <menuitem name="Dusted off Cabinets"/>
-        <menuitem name="Washed Hats"/>
         <menuitem name="Cleaned Carpet"/>
-        <menuitem name="Bought Printer Ink/Toner"/>
-        <menuitem name="Replaced Printer Ink/Toner"/>
         <menuitem name="Replaced Lightbulb"/>
     </menuitem>
 </menu>
